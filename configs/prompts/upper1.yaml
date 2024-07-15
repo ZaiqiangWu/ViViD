@@ -13,7 +13,7 @@ weight_dtype: 'fp16'
 L: 48
 
 model_video_paths:
-  - "data/videos/upper1.mp4"
+  - "data/videos/ichao.mp4"
 
 cloth_image_paths:
   - "data/cloth/00057_00.jpg"
