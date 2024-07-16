@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument("--config",type=str,default="./configs/prompts/test.yaml")
     parser.add_argument("-W", type=int, default=384)
     parser.add_argument("-H", type=int, default=512)
-    parser.add_argument("-L", type=int, default=1)
+    parser.add_argument("-L", type=int, default=36)#24
 
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--cfg", type=float, default=3.5)
@@ -176,6 +176,8 @@ def main():
                 generator=generator,
             )
             video = pipeline_output.videos
+            print(video.shape)
+            print(video_tensor.shape)
 
             video = torch.cat([video_tensor,video], dim=0)
             save_videos_grid(
