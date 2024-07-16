@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument("--config",type=str,default="./configs/prompts/test.yaml")
     parser.add_argument("-W", type=int, default=384)
     parser.add_argument("-H", type=int, default=512)
-    parser.add_argument("-L", type=int, default=36)#24
+    parser.add_argument("-L", type=int, default=24)#24
 
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--cfg", type=float, default=3.5)
