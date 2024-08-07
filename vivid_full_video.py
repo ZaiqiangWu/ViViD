@@ -137,7 +137,7 @@ def main():
     agn_mask_images=read_frames(agn_mask_path)
     pose_images=read_frames(densepose_path)
     n_frames = len(video_images)
-    batch_size=8
+    batch_size=16
     start_id = 0
     end_id = start_id + batch_size
     result_video_list = []
@@ -192,14 +192,15 @@ def main():
         start_id+=batch_size
         end_id=start_id+batch_size
         print(video.shape)#[1, 3, 8, 512, 384]
+        result_video_list.appedn(video)
 
 
 
-    video = torch.cat([video_tensor,video], dim=0)
+    video = torch.cat(result_video_list,dim=2)#torch.cat([video_tensor,video], dim=0)
     save_videos_grid(
         video,
-        f"{save_dir}/{model_name}_{cloth_name}_{args.H}x{args.W}_{int(guidance_scale)}_{time_str}.mp4",
-        n_rows=2,
+        "result.mp4",
+        n_rows=1,
         fps=src_fps if args.fps is None else args.fps,
     )
 
