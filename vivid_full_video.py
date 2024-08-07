@@ -147,6 +147,8 @@ def main():
         if end_id > n_frames:
             end_id = n_frames
         clip_length=end_id-start_id
+        print("Start id: ",start_id)
+        print("End id: ", end_id)
         video_tensor_list = []
         for vid_image_pil in video_images[start_id:end_id]:
             video_tensor_list.append(transform(vid_image_pil))
