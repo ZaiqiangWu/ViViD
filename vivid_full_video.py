@@ -195,7 +195,7 @@ def main():
         start_id+=batch_size
         end_id=start_id+batch_size
         print(video.shape)#[1, 3, 8, 512, 384]
-        result_video_list.append(video)
+
 
 
 
