@@ -17,7 +17,7 @@ from src.utils.util import get_fps, read_frames, save_videos_grid
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config",type=str,default="./configs/prompts/test.yaml")
+    parser.add_argument("--config",type=str,default="./configs/prompts/upper1.yaml")
     parser.add_argument("-W", type=int, default=384)
     parser.add_argument("-H", type=int, default=512)
     parser.add_argument("-L", type=int, default=24)#24
