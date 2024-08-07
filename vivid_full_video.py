@@ -209,6 +209,7 @@ def main(video_id,garment_id):
     video = torch.cat(result_video_list,dim=2)#torch.cat([video_tensor,video], dim=0)
     print(video.shape)
     target_dir='./vivid_results'
+    os.makedirs(target_dir,exist_ok=True)
     v_path=os.path.join(target_dir,str(video_id).zfill(2)+str(garment_id).zfill(2)+".mp4")
     save_videos_grid(
         video,
