@@ -14,6 +14,12 @@ from src.models.unet_2d_condition import UNet2DConditionModel
 from src.models.unet_3d import UNet3DConditionModel
 from src.pipelines.pipeline_pose2vid_long import Pose2VideoPipeline
 from src.utils.util import get_fps, read_frames, save_videos_grid
+import os
+
+jin_dict={i:"jin_"+str(i).zfill(2) for i in range(16)}
+lab_dict={16+i:"lab_"+str(i).zfill(2) for i in range(9)}
+video_dict=jin_dict.copy()
+video_dict.update(lab_dict)
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -33,7 +39,7 @@ def parse_args():
     return args
 
 
-def main():
+def main(video_id,garment_id):
     args = parse_args()
 
     config = OmegaConf.load(args.config)
@@ -115,8 +121,8 @@ def main():
     save_dir = Path(f"output/{date_str}/{save_dir_name}")
     save_dir.mkdir(exist_ok=True, parents=True)
 
-    model_video_path = "data/videos/jin_00.mp4"#config.model_video_paths
-    cloth_image_path = "data/cloth/jin_00.jpg"#config.cloth_image_paths
+    model_video_path = "data/videos/"+video_dict[video_id]+".mp4"#config.model_video_paths
+    cloth_image_path = "data/cloth/"+video_dict[garment_id]+".jpg"#config.cloth_image_paths
 
     transform = transforms.Compose(
         [transforms.Resize((height, width)), transforms.ToTensor()]
@@ -202,13 +208,16 @@ def main():
 
     video = torch.cat(result_video_list,dim=2)#torch.cat([video_tensor,video], dim=0)
     print(video.shape)
+    target_dir='./vivid_results'
+    v_path=os.path.join(target_dir,str(video_id).zfill(2)+str(garment_id).zfill(2)+".mp4")
     save_videos_grid(
         video,
-        "./result.mp4",
+        v_path,
         n_rows=1,
         fps=src_fps if args.fps is None else args.fps,
     )
 
 
 if __name__ == "__main__":
-    main()
+    for i in range(25):
+        main(i,i)
