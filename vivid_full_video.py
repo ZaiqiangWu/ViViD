@@ -115,80 +115,91 @@ def main():
     save_dir = Path(f"output/{date_str}/{save_dir_name}")
     save_dir.mkdir(exist_ok=True, parents=True)
 
-    model_video_paths = config.model_video_paths
-    cloth_image_paths = config.cloth_image_paths
+    model_video_path = "data/videos/ichao.mp4"#config.model_video_paths
+    cloth_image_path = "data/cloth/00057_00.jpg"#config.cloth_image_paths
 
     transform = transforms.Compose(
         [transforms.Resize((height, width)), transforms.ToTensor()]
     )
 
 
-    for model_image_path in model_video_paths: # for each video
-        src_fps = get_fps(model_image_path)
+    #for model_image_path in model_video_paths: # for each video
+    model_image_path = model_video_path
+    src_fps = get_fps(model_image_path)
 
-        model_name = Path(model_image_path).stem
-        agnostic_path=model_image_path.replace("videos","agnostic")
-        agn_mask_path=model_image_path.replace("videos","agnostic_mask")
-        densepose_path=model_image_path.replace("videos","densepose")
+    model_name = Path(model_image_path).stem
+    agnostic_path=model_image_path.replace("videos","agnostic")
+    agn_mask_path=model_image_path.replace("videos","agnostic_mask")
+    densepose_path=model_image_path.replace("videos","densepose")
 
-        video_tensor_list=[]
-        video_images=read_frames(model_image_path)
+    video_images=read_frames(model_image_path)
+    agnostic_images = read_frames(agnostic_path)
+    agn_mask_images=read_frames(agn_mask_path)
+    pose_images=read_frames(densepose_path)
+    n_frames = len(video_images)
+    batch_size=8
+    start_id = 0
+    end_id = start_id + batch_size
+    result_video_list = []
 
-        for vid_image_pil in video_images[:clip_length]:
+    while start_id < n_frames:
+        if end_id > n_frames:
+            end_id = n_frames
+        video_tensor_list = []
+        for vid_image_pil in video_images[start_id:end_id]:
             video_tensor_list.append(transform(vid_image_pil))
 
         video_tensor = torch.stack(video_tensor_list, dim=0)  # (f, c, h, w)
         video_tensor = video_tensor.transpose(0, 1)
 
-        agnostic_list=[]
-        agnostic_images=read_frames(agnostic_path)
-        for agnostic_image_pil in agnostic_images[:clip_length]:
+        agnostic_list = []
+        for agnostic_image_pil in agnostic_images[start_id:end_id]:
             agnostic_list.append(agnostic_image_pil)
 
-        agn_mask_list=[]
-        agn_mask_images=read_frames(agn_mask_path)
-        for agn_mask_image_pil in agn_mask_images[:clip_length]:
+        agn_mask_list = []
+        for agn_mask_image_pil in agn_mask_images[start_id:end_id]:
             agn_mask_list.append(agn_mask_image_pil)
 
-        pose_list=[]
-        pose_images=read_frames(densepose_path)
-        for pose_image_pil in pose_images[:clip_length]:
+        pose_list = []
+        for pose_image_pil in pose_images[start_id:end_id]:
             pose_list.append(pose_image_pil)
 
         video_tensor = video_tensor.unsqueeze(0)
 
+        # for cloth_image_path in cloth_image_paths:
+        cloth_name = Path(cloth_image_path).stem
+        cloth_image_pil = Image.open(cloth_image_path).convert("RGB")
 
-        for cloth_image_path in cloth_image_paths:
-            cloth_name =  Path(cloth_image_path).stem
-            cloth_image_pil = Image.open(cloth_image_path).convert("RGB")
+        cloth_mask_path = cloth_image_path.replace("cloth", "cloth_mask")
+        cloth_mask_pil = Image.open(cloth_mask_path).convert("RGB")
 
-            cloth_mask_path=cloth_image_path.replace("cloth","cloth_mask")
-            cloth_mask_pil = Image.open(cloth_mask_path).convert("RGB")
+        pipeline_output = pipe(
+            agnostic_list,
+            agn_mask_list,
+            cloth_image_pil,
+            cloth_mask_pil,
+            pose_list,
+            width,
+            height,
+            clip_length,
+            steps,
+            guidance_scale,
+            generator=generator,
+        )
+        video = pipeline_output.videos
+        result_video_list.append(video)
+        start_id+=batch_size
+        end_id=start_id+batch_size
 
-            pipeline_output = pipe(
-                agnostic_list,
-                agn_mask_list,
-                cloth_image_pil,
-                cloth_mask_pil,
-                pose_list,
-                width,
-                height,
-                clip_length,
-                steps,
-                guidance_scale,
-                generator=generator,
-            )
-            video = pipeline_output.videos
-            print(video.shape)
-            print(video_tensor.shape)
 
-            video = torch.cat([video_tensor,video], dim=0)
-            save_videos_grid(
-                video,
-                f"{save_dir}/{model_name}_{cloth_name}_{args.H}x{args.W}_{int(guidance_scale)}_{time_str}.mp4",
-                n_rows=2,
-                fps=src_fps if args.fps is None else args.fps,
-            )
+
+    video = torch.cat([video_tensor,video], dim=0)
+    save_videos_grid(
+        video,
+        f"{save_dir}/{model_name}_{cloth_name}_{args.H}x{args.W}_{int(guidance_scale)}_{time_str}.mp4",
+        n_rows=2,
+        fps=src_fps if args.fps is None else args.fps,
+    )
 
 
 if __name__ == "__main__":
