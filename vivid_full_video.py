@@ -115,8 +115,8 @@ def main():
     save_dir = Path(f"output/{date_str}/{save_dir_name}")
     save_dir.mkdir(exist_ok=True, parents=True)
 
-    model_video_path = "data/videos/ichao.mp4"#config.model_video_paths
-    cloth_image_path = "data/cloth/00057_00.jpg"#config.cloth_image_paths
+    model_video_path = "data/videos/jin_00.mp4"#config.model_video_paths
+    cloth_image_path = "data/cloth/jin_00.jpg"#config.cloth_image_paths
 
     transform = transforms.Compose(
         [transforms.Resize((height, width)), transforms.ToTensor()]
@@ -190,6 +190,7 @@ def main():
         result_video_list.append(video)
         start_id+=batch_size
         end_id=start_id+batch_size
+        print(video.shape)
 
 
 
