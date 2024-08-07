@@ -137,7 +137,7 @@ def main():
     agn_mask_images=read_frames(agn_mask_path)
     pose_images=read_frames(densepose_path)
     n_frames = len(video_images)
-    batch_size=16
+    batch_size=32
     start_id = 0
     end_id = start_id + batch_size
     result_video_list = []
@@ -193,7 +193,7 @@ def main():
         end_id=start_id+batch_size
         print(video.shape)#[1, 3, 8, 512, 384]
         result_video_list.append(video)
-        break
+
 
 
 
