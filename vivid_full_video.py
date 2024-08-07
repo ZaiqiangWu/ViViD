@@ -137,6 +137,7 @@ def main():
     agn_mask_images=read_frames(agn_mask_path)
     pose_images=read_frames(densepose_path)
     n_frames = len(video_images)
+    print("Total frames", n_frames)
     batch_size=32
     start_id = 0
     end_id = start_id + batch_size
@@ -198,6 +199,7 @@ def main():
 
 
     video = torch.cat(result_video_list,dim=2)#torch.cat([video_tensor,video], dim=0)
+    print(video.shape)
     save_videos_grid(
         video,
         "./result.mp4",
