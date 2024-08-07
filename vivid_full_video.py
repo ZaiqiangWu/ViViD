@@ -145,6 +145,7 @@ def main():
     while start_id < n_frames:
         if end_id > n_frames:
             end_id = n_frames
+        clip_length=end_id-start_id+1
         video_tensor_list = []
         for vid_image_pil in video_images[start_id:end_id]:
             video_tensor_list.append(transform(vid_image_pil))
@@ -190,7 +191,7 @@ def main():
         result_video_list.append(video)
         start_id+=batch_size
         end_id=start_id+batch_size
-        print(video.shape)
+        print(video.shape)#[1, 3, 8, 512, 384]
 
 
 
