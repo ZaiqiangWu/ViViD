@@ -220,5 +220,6 @@ def main(video_id,garment_id):
 
 
 if __name__ == "__main__":
-    for i in range(25):
-        main(i,i)
+    main(17,5)
+    #for i in range(25):
+    #    main(i,i)
