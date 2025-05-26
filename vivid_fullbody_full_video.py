@@ -153,7 +153,7 @@ def main(video_path,garment_path):
     os.makedirs(target_dir, exist_ok=True)
     video_name = os.path.basename(video_path)
     v_path = os.path.join(target_dir, video_name)
-    video_writer = MultithreadVideoWriter(v_path,src_fps)
+    video_writer = MultithreadVideoWriter(v_path,float(src_fps))
 
     while start_id < n_frames:
         if end_id > n_frames:
