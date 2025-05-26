@@ -213,8 +213,8 @@ def main(video_path,garment_path):
         video = (video * 255).numpy().astype(np.uint8)
         for i in range(length):
             video_writer.append(video[i],isRGB=True)
-        if start_id > 20:
-            break
+        #if start_id > 20:
+        #    break
 
 
 
@@ -224,5 +224,12 @@ def main(video_path,garment_path):
 
 if __name__ == "__main__":
     main(video_path='./data/videos/jin_16_test.mp4',garment_path='./data/cloth/han.jpg')
+    main(video_path='./data/videos/jin_16_train.mp4', garment_path='./data/cloth/han.jpg')
+    main(video_path='./data/videos/jin_16_test.mp4', garment_path='./data/cloth/coat.jpg')
+    main(video_path='./data/videos/jin_16_train.mp4', garment_path='./data/cloth/coat.jpg')
+    main(video_path='./data/videos/jin_16_test.mp4', garment_path='./data/cloth/dress.jpg')
+    main(video_path='./data/videos/jin_16_train.mp4', garment_path='./data/cloth/dress.jpg')
+    main(video_path='./data/videos/jin_16_test.mp4', garment_path='./data/cloth/korean.jpg')
+    main(video_path='./data/videos/jin_16_train.mp4', garment_path='./data/cloth/korean.jpg')
     #for i in range(25):
     #    main(i,i)
