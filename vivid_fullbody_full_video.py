@@ -15,11 +15,9 @@ from src.models.unet_3d import UNet3DConditionModel
 from src.pipelines.pipeline_pose2vid_long import Pose2VideoPipeline
 from src.utils.util import get_fps, read_frames, save_videos_grid
 import os
+import numpy as np
 
-jin_dict={i:"jin_"+str(i).zfill(2) for i in range(16)}
-lab_dict={16+i:"lab_"+str(i).zfill(2) for i in range(9)}
-video_dict=jin_dict.copy()
-video_dict.update(lab_dict)
+from util.multithread_video_writer import MultithreadVideoWriter
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -149,6 +147,14 @@ def main(video_path,garment_path):
     end_id = start_id + batch_size
     result_video_list = []
 
+    target_dir = './vivid_results'
+    garment_name = os.path.basename(garment_path).split(".")[0]
+    target_dir = os.path.join(target_dir, garment_name)
+    os.makedirs(target_dir, exist_ok=True)
+    video_name = os.path.basename(video_path)
+    v_path = os.path.join(target_dir, video_name)
+    video_writer = MultithreadVideoWriter(v_path,src_fps)
+
     while start_id < n_frames:
         if end_id > n_frames:
             end_id = n_frames
@@ -201,26 +207,19 @@ def main(video_path,garment_path):
         start_id+=batch_size
         end_id=start_id+batch_size
         print(video.shape)#[1, 3, 8, 512, 384]
+        video = video.squeeze(0)# c,l,h,w
+        video = video.permute(1,2,3,0) # l h w c
+        length = video.shape[0]
+        video = (video * 255).numpy().astype(np.uint8)
+        for i in range(length):
+            video_writer.append(video[i],isRGB=True)
+        if start_id > 20:
+            break
 
 
 
-
-
-    video = torch.cat(result_video_list,dim=2)#torch.cat([video_tensor,video], dim=0)
-    print(video.shape)
-    target_dir='./vivid_results'
-    garment_name = os.path.basename(garment_path).split(".")[0]
-    target_dir=os.path.join(target_dir,garment_name)
-    os.makedirs(target_dir,exist_ok=True)
-
-    video_name = os.path.basename(video_path)
-    v_path=os.path.join(target_dir,video_name)
-    save_videos_grid(
-        video,
-        v_path,
-        n_rows=1,
-        fps=src_fps if args.fps is None else args.fps,
-    )
+    video_writer.make_video()
+    video_writer.close()
 
 
 if __name__ == "__main__":
