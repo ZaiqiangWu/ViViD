@@ -203,7 +203,7 @@ def main(video_path,garment_path):
             generator=generator,
         )
         video = pipeline_output.videos
-        result_video_list.append(video)
+        #result_video_list.append(video)
         start_id+=batch_size
         end_id=start_id+batch_size
         print(video.shape)#[1, 3, 8, 512, 384]
@@ -223,7 +223,7 @@ def main(video_path,garment_path):
 
 
 if __name__ == "__main__":
-    main(video_path='./data/videos/jin_16_test.mp4',garment_path='./data/cloth/han.jpg')
+    #main(video_path='./data/videos/jin_16_test.mp4',garment_path='./data/cloth/han.jpg')
     main(video_path='./data/videos/jin_16_train.mp4', garment_path='./data/cloth/han.jpg')
     main(video_path='./data/videos/jin_16_test.mp4', garment_path='./data/cloth/coat.jpg')
     main(video_path='./data/videos/jin_16_train.mp4', garment_path='./data/cloth/coat.jpg')
