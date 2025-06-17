@@ -222,7 +222,7 @@ def main(video_path,garment_path):
 
 
 if __name__ == "__main__":
-    main('./data/videos/jing_16_test.mp4','./data/cloth/jin_17.jpg')
-    main('./data/videos/jing_16_test.mp4', './data/cloth/jin_23.jpg')
+    main('./data/videos/jin_16_test.mp4','./data/cloth/jin_17.jpg')
+    main('./data/videos/jin_16_test.mp4', './data/cloth/jin_23.jpg')
     #for i in range(25):
     #    main(i,i)
