@@ -39,7 +39,7 @@ def parse_args():
     return args
 
 
-def main(video_id,garment_id):
+def main(video_path,garment_path):
     args = parse_args()
 
     config = OmegaConf.load(args.config)
@@ -121,8 +121,8 @@ def main(video_id,garment_id):
     save_dir = Path(f"output/{date_str}/{save_dir_name}")
     save_dir.mkdir(exist_ok=True, parents=True)
 
-    model_video_path = "data/videos/"+video_dict[video_id]+".mp4"#config.model_video_paths
-    cloth_image_path = "data/cloth/"+video_dict[garment_id]+".jpg"#config.cloth_image_paths
+    model_video_path = video_path#"data/videos/"+video_dict[video_id]+".mp4"#config.model_video_paths
+    cloth_image_path = garment_path#"data/cloth/"+video_dict[garment_id]+".jpg"#config.cloth_image_paths
 
     transform = transforms.Compose(
         [transforms.Resize((height, width)), transforms.ToTensor()]
@@ -210,7 +210,9 @@ def main(video_id,garment_id):
     print(video.shape)
     target_dir='./vivid_results'
     os.makedirs(target_dir,exist_ok=True)
-    v_path=os.path.join(target_dir,str(video_id).zfill(2)+"_"+str(garment_id).zfill(2)+".mp4")
+    video_name=os.path.basename(video_path).split(".")[0]
+    garment_name=os.path.basename(garment_path).split(".")[0]
+    v_path=os.path.join(target_dir,video_name+"_"+garment_name+".mp4")
     save_videos_grid(
         video,
         v_path,
@@ -220,6 +222,7 @@ def main(video_id,garment_id):
 
 
 if __name__ == "__main__":
-    main(17,5)
+    main('./data/videos/jing_16_test.mp4','./data/cloth/jin_17.jpg')
+    main('./data/videos/jing_16_test.mp4', './data/cloth/jin_23.jpg')
     #for i in range(25):
     #    main(i,i)
